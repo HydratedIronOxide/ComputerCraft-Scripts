@@ -6,8 +6,8 @@ local math = require "math"
 
 local rs = peripheral.wrap('right')
 
-local THRESHOLD = 10
-local armed = false
+local THRESHOLD = tonumber(arg[1]) or 20
+local arm_countdown = 60
 
 -- prev, current
 local vel = {0, 0}
@@ -30,13 +30,15 @@ while true do
     vel[1] = vel[2]
     accel[1] = accel[2]
 
-    if jerk > THRESHOLD and armed then
+    if jerk > 1 then print(jerk) end
+
+    if jerk > THRESHOLD and arm_countdown <= 0 then
         print('detonate')
         detonate()
     end
 
-    if redstone.getInput('left') then
-        armed = true
+    if redstone.getInput('left') and vel[2] > 10 then
+        arm_countdown = arm_countdown - 1
     end
 
     sleep(0.05)
